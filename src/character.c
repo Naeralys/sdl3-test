@@ -1,3 +1,4 @@
+#include "SDL3/SDL_keyboard.h"
 #include <SDL3/SDL.h>
 #include <stdlib.h>
 
@@ -18,7 +19,7 @@ unsigned int deltaTime;
 
 struct Character* init_character(SDL_Renderer *renderer) {
 	struct Character *character = malloc(sizeof(struct Character));
-	character->speed = 0.02;
+	character->speed = 2;
 
 	character->body.x = 50;
 	character->body.y = 450;
@@ -47,24 +48,29 @@ void draw_character(SDL_Renderer *renderer, struct Character *character) {
 	SDL_RenderTexture(renderer, character->img, NULL, &character->body);
 }
 
-void move_character(SDL_Event *event, struct Character *character) {
-	if (event->type == SDL_EVENT_KEY_DOWN) {
-		if(event->key.scancode == SDL_SCANCODE_W) {
-			character->vel.y = -(character->speed);
-		}
-		if(event->key.scancode == SDL_SCANCODE_S) {
-			character->vel.y = character->speed;
-		}
-		if(event->key.scancode == SDL_SCANCODE_A) {
-			character->vel.x = -(character->speed);
-		}
-		if(event->key.scancode == SDL_SCANCODE_D) {
-			character->vel.x = character->speed;
-		}	
+void move_character(struct Character *character) {
+	const bool * keyboardState = SDL_GetKeyboardState(NULL);
+	
+	bool characterMovedX = false;
+	bool characterMovedY = false;
 
-		return;
+	if(keyboardState[SDL_SCANCODE_W]) {
+		character->vel.y = -(character->speed);
+		characterMovedY = true;
 	}
+	if(keyboardState[SDL_SCANCODE_S]) {
+		character->vel.y = character->speed;
+		characterMovedY = true;
+	}
+	if(keyboardState[SDL_SCANCODE_A]) {
+		character->vel.x = -(character->speed);
+		characterMovedX = true;
+	}
+	if(keyboardState[SDL_SCANCODE_D]) {
+		character->vel.x = character->speed;
+		characterMovedX = true;
+	}	
 
-	character->vel.y = 0;
-	character->vel.x = 0;
+	if(!characterMovedY) character->vel.y = 0;
+	if(!characterMovedX) character->vel.x = 0;
 }

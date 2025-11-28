@@ -1,4 +1,3 @@
-
 #define SDL_MAIN_USE_CALLBACKS 1
 
 #include <stdio.h>
@@ -22,7 +21,7 @@ static struct Resources *resources = NULL;
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
 	printf("Initialized app\n");
-	SDL_CreateWindowAndRenderer("Adam testar", WIDTH, HEIGHT, false, &window, &renderer);
+	SDL_CreateWindowAndRenderer("Adam testar", WIDTH, HEIGHT, SDL_WINDOW_VULKAN, &window, &renderer);
 
 	struct Resources *_res = init_resources(renderer);
 	resources = _res;
@@ -32,9 +31,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
 
 SDL_AppResult SDL_AppIterate(void *appstate) {
+
 	SDL_SetRenderDrawColor(renderer, 0, 0 , 0, 255);
 	SDL_RenderClear(renderer);
 
+	handle_resources(resources);
 	draw_resources(renderer, resources);
 
 	SDL_RenderPresent(renderer);
@@ -46,8 +47,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
 	if (event->type == SDL_EVENT_QUIT) {
 		return SDL_APP_SUCCESS;
 	}
-
-	handle_resources(event, resources); 
 
 	return SDL_APP_CONTINUE;	
 }
